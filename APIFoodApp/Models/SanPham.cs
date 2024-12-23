@@ -17,6 +17,8 @@ public partial class SanPham
 
     public decimal? Gia { get; set; }
 
+    public int? SoLuong { get; set; }
+
     public int? TrangThai { get; set; }
 
     public string? Anh1 { get; set; }

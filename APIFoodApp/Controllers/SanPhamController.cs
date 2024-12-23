@@ -37,6 +37,7 @@ namespace APIFoodApp.Controllers
 											 TenSanPham = sp.TenSanPham,
 											 MoTa = sp.MoTa,
 											 Gia = sp.Gia,
+											 SoLuong = sp.SoLuong,
 											 TrangThai = sp.TrangThai,
 											 NgayTao = sp.NgayTao,
 											 NgayCapNhat = sp.NgayCapNhat,
@@ -71,6 +72,7 @@ namespace APIFoodApp.Controllers
 											TenSanPham = sp.TenSanPham,
 											MoTa = sp.MoTa,
 											Gia = sp.Gia,
+											SoLuong = sp.SoLuong,
 											TrangThai = sp.TrangThai,
 											NgayTao = sp.NgayTao,
 											NgayCapNhat = sp.NgayCapNhat,
@@ -105,6 +107,7 @@ namespace APIFoodApp.Controllers
 				TenSanPham = dto.TenSanPham,
 				MoTa = dto.MoTa,
 				Gia = dto.Gia,
+				SoLuong = dto.SoLuong,
 				TrangThai = dto.TrangThai,
 				MaLoai = dto.MaLoai,
 				MaNhaCungCap = dto.MaNhaCungCap,
@@ -177,6 +180,7 @@ namespace APIFoodApp.Controllers
 			existingProduct.TenSanPham = updatedProductDto.TenSanPham;
 			existingProduct.MoTa = updatedProductDto.MoTa;
 			existingProduct.Gia = updatedProductDto.Gia;
+			existingProduct.SoLuong = updatedProductDto.SoLuong;
 			existingProduct.TrangThai = updatedProductDto.TrangThai;
 			existingProduct.NgayCapNhat = DateTime.Now;
 			existingProduct.MaLoai = updatedProductDto.MaLoai;
@@ -246,6 +250,7 @@ namespace APIFoodApp.Controllers
 											 TenSanPham = sp.TenSanPham,
 											 MoTa = sp.MoTa,
 											 Gia = sp.Gia,
+											 SoLuong = sp.SoLuong,
 											 TrangThai = sp.TrangThai,
 											 NgayTao = sp.NgayTao,
 											 NgayCapNhat = sp.NgayCapNhat
