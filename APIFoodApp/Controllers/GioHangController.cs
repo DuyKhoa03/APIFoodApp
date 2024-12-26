@@ -72,7 +72,36 @@ namespace APIFoodApp.Controllers
 
 			return Ok(gioHang);
 		}
+		/// <summary>
+		/// Lấy giỏ hàng theo mã người dùng.
+		/// </summary>
+		/// <param name="id"></param>
+		/// <returns></returns>
+		[HttpGet("{id}")]
+		public async Task<ActionResult<GioHangDto>> GetByUserId(int id)
+		{
+			var gioHang = await _context.GioHangs
+										.Include(gh => gh.MaNguoiDungNavigation)
+										.Include(gh => gh.MaSanPhamNavigation)
+										.Where(gh => gh.MaNguoiDung == id)
+										.Select(gh => new GioHangDto
+										{
+											MaGioHang = gh.MaGioHang,
+											MaSanPham = gh.MaSanPham,
+											MaNguoiDung = gh.MaNguoiDung,
+											SoLuong = gh.SoLuong,
+											TenNguoiDung = gh.MaNguoiDungNavigation.TenNguoiDung,
+											TenSanPham = gh.MaSanPhamNavigation.TenSanPham
+										})
+										.FirstOrDefaultAsync();
 
+			if (gioHang == null)
+			{
+				return NotFound("GioHang not found.");
+			}
+
+			return Ok(gioHang);
+		}
 		/// <summary>
 		/// Tạo mới một mục giỏ hàng.
 		/// </summary>
@@ -86,18 +115,68 @@ namespace APIFoodApp.Controllers
 				return BadRequest("GioHang data is null.");
 			}
 
-			var newGioHang = new GioHang
+			// Kiểm tra xem sản phẩm có tồn tại không
+			var sanPham = await _context.SanPhams.FindAsync(newGioHangDto.MaSanPham);
+			if (sanPham == null)
 			{
-				MaSanPham = newGioHangDto.MaSanPham,
-				MaNguoiDung = newGioHangDto.MaNguoiDung,
-				SoLuong = newGioHangDto.SoLuong ?? 1 // Mặc định số lượng là 1 nếu không chỉ định
-			};
+				return NotFound("SanPham không tồn tại.");
+			}
 
-			_context.GioHangs.Add(newGioHang);
-			await _context.SaveChangesAsync();
+			// Kiểm tra xem người dùng có tồn tại không
+			var nguoiDung = await _context.NguoiDungs.FindAsync(newGioHangDto.MaNguoiDung);
+			if (nguoiDung == null)
+			{
+				return NotFound("NguoiDung không tồn tại.");
+			}
 
-			return CreatedAtAction(nameof(GetById), new { id = newGioHang.MaGioHang }, newGioHang);
+			// Kiểm tra nếu sản phẩm đã tồn tại trong giỏ hàng của người dùng
+			var existingGioHang = await _context.GioHangs
+				.FirstOrDefaultAsync(gh => gh.MaSanPham == newGioHangDto.MaSanPham
+										&& gh.MaNguoiDung == newGioHangDto.MaNguoiDung);
+
+			if (existingGioHang != null)
+			{
+				// Nếu sản phẩm đã tồn tại, cộng thêm số lượng
+				existingGioHang.SoLuong += newGioHangDto.SoLuong ?? 1;
+
+				try
+				{
+					_context.GioHangs.Update(existingGioHang);
+					await _context.SaveChangesAsync();
+				}
+				catch (Exception ex)
+				{
+					return StatusCode(500, $"Internal server error: {ex.Message}");
+				}
+
+				// Trả về giỏ hàng đã cập nhật
+				return Ok(existingGioHang);
+			}
+			else
+			{
+				// Nếu sản phẩm chưa tồn tại, thêm sản phẩm mới vào giỏ hàng
+				var newGioHang = new GioHang
+				{
+					MaSanPham = newGioHangDto.MaSanPham,
+					MaNguoiDung = newGioHangDto.MaNguoiDung,
+					SoLuong = newGioHangDto.SoLuong ?? 1 // Mặc định số lượng là 1 nếu không chỉ định
+				};
+
+				try
+				{
+					_context.GioHangs.Add(newGioHang);
+					await _context.SaveChangesAsync();
+				}
+				catch (Exception ex)
+				{
+					return StatusCode(500, $"Internal server error: {ex.Message}");
+				}
+
+				// Trả về giỏ hàng mới tạo
+				return CreatedAtAction(nameof(GetById), new { id = newGioHang.MaGioHang }, newGioHang);
+			}
 		}
+
 
 		/// <summary>
 		/// Cập nhật thông tin sản phẩm trong giỏ hàng.
@@ -105,42 +184,63 @@ namespace APIFoodApp.Controllers
 		/// <param name="id">ID của giỏ hàng cần cập nhật.</param>
 		/// <param name="updatedGioHangDto">Thông tin sản phẩm trong giỏ hàng cần cập nhật.</param>
 		/// <returns>Không trả về nội dung nếu cập nhật thành công.</returns>
-		[HttpPut("{id}")]
-		public async Task<IActionResult> UpdateGioHang(int id, GioHangDto updatedGioHangDto)
+		[HttpPut]
+		public async Task<IActionResult> UpdateGioHang(GioHangDto updatedGioHangDto)
 		{
 			if (updatedGioHangDto == null)
 			{
 				return BadRequest("GioHang data is null.");
 			}
 
-			var existingGioHang = await _context.GioHangs.FindAsync(id);
+			// Kiểm tra nếu sản phẩm và người dùng được cung cấp
+			if (updatedGioHangDto.MaSanPham == null || updatedGioHangDto.MaNguoiDung == null)
+			{
+				return BadRequest("MaSanPham and MaNguoiDung are required.");
+			}
+
+			// Tìm giỏ hàng cần cập nhật dựa vào Mã Sản Phẩm và Mã Người Dùng
+			var existingGioHang = await _context.GioHangs
+				.FirstOrDefaultAsync(gh => gh.MaSanPham == updatedGioHangDto.MaSanPham
+										&& gh.MaNguoiDung == updatedGioHangDto.MaNguoiDung);
+
 			if (existingGioHang == null)
 			{
 				return NotFound("GioHang not found.");
 			}
 
-			// Cập nhật các thuộc tính
-			existingGioHang.MaSanPham = updatedGioHangDto.MaSanPham;
-			existingGioHang.MaNguoiDung = updatedGioHangDto.MaNguoiDung;
+			// Kiểm tra sản phẩm có tồn tại không
+			var sanPham = await _context.SanPhams.FindAsync(updatedGioHangDto.MaSanPham);
+			if (sanPham == null)
+			{
+				return NotFound("SanPham không tồn tại.");
+			}
+
+			// Kiểm tra người dùng có tồn tại không
+			var nguoiDung = await _context.NguoiDungs.FindAsync(updatedGioHangDto.MaNguoiDung);
+			if (nguoiDung == null)
+			{
+				return NotFound("NguoiDung không tồn tại.");
+			}
+
+			// Cập nhật thông tin giỏ hàng
 			existingGioHang.SoLuong = updatedGioHangDto.SoLuong ?? existingGioHang.SoLuong;
 
 			try
 			{
+				_context.GioHangs.Update(existingGioHang);
 				await _context.SaveChangesAsync();
 			}
-			catch (DbUpdateConcurrencyException)
+			catch (DbUpdateConcurrencyException ex)
 			{
-				if (!await _context.GioHangs.AnyAsync(gh => gh.MaGioHang == id))
-				{
-					return NotFound("GioHang not found.");
-				}
-				else
-				{
-					throw;
-				}
+				return Conflict($"Concurrency conflict: {ex.Message}");
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, $"Internal server error: {ex.Message}");
 			}
 
-			return NoContent();
+			// Trả về thông tin giỏ hàng đã cập nhật
+			return Ok(existingGioHang);
 		}
 
 		/// <summary>
