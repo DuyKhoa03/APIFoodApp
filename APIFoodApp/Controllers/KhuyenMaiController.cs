@@ -26,7 +26,6 @@ namespace APIFoodApp.Controllers
 		public async Task<ActionResult<IEnumerable<KhuyenMaiDto>>> Get()
 		{
 			var KhuyenMais = await _context.KhuyenMais
-									  .Include(m => m.MaLoai)
 									  .Where(m => m.An == false)
 									  .Select(m => new KhuyenMaiDto
 									  {
@@ -55,7 +54,6 @@ namespace APIFoodApp.Controllers
 		public async Task<ActionResult<KhuyenMaiDto>> GetById(int id)
 		{
 			var KhuyenMai = await _context.KhuyenMais
-									 .Include(m => m.MaLoai)
 									 .Where(m => m.MaKhuyenMai == id && m.An == false)
 									 .Select(m => new KhuyenMaiDto
 									 {
