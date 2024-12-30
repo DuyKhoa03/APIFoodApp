@@ -126,7 +126,37 @@ namespace APIFoodApp.Controllers
 
 			return Ok(nguoiDung);
 		}
+		/// <summary>
+		/// tìm người dùng theo username
+		/// </summary>
+		[HttpGet("{username}")]
+		public async Task<ActionResult<NguoiDungDto>> GetByUsername(string username)
+		{
+			var nguoiDung = await _context.NguoiDungs
+										  .Where(nd => nd.TenDangNhap == username && nd.An == false)
+										  .Select(nd => new NguoiDungDto
+										  {
+											  MaNguoiDung = nd.MaNguoiDung,
+											  TenNguoiDung = nd.TenNguoiDung,
+											  Email = nd.Email,
+											  SoDienThoai = nd.SoDienThoai,
+											  Anh = nd.Anh,
+											  TenDangNhap = nd.TenDangNhap,
+											  MatKhau = null, // Không trả về mật khẩu
+											  Quyen = nd.Quyen,
+											  An = nd.An
+										  })
+										  .FirstOrDefaultAsync();
 
+			if (nguoiDung == null)
+			{
+				return NotFound("User not found.");
+			}
+
+			return Ok(nguoiDung);
+		}
+		/// <param name="newNguoiDungDto"></param>
+		/// <returns></returns>
 		///// <summary>
 		///// Tạo mới một người dùng.
 		///// </summary>
@@ -137,7 +167,13 @@ namespace APIFoodApp.Controllers
 			{
 				return BadRequest("Invalid user data or password is missing.");
 			}
-
+			// Kiểm tra tên đăng nhập đã tồn tại
+			var existingUser = await _context.NguoiDungs
+				.FirstOrDefaultAsync(u => u.TenDangNhap == newNguoiDungDto.TenDangNhap);
+			if (existingUser != null)
+			{
+				return Conflict("Tên đăng nhập đã tồn tại. Vui lòng chọn tên khác.");
+			}
 			// Upload ảnh lên Cloudinary
 			if (newNguoiDungDto.Img != null && newNguoiDungDto.Img.Length > 0)
 			{

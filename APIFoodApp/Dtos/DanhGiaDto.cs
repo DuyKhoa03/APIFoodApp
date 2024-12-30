@@ -25,5 +25,6 @@ namespace APIFoodApp.Dtos
 		public string? TenNguoiDung { get; set; }
 
 		public string? TenSanPham { get; set; }
+		public IFormFile? Img { get; set; } // Trường này để nhận file ảnh tải lên
 	}
 }

@@ -1,5 +1,7 @@
 ﻿using APIFoodApp.Dtos;
 using APIFoodApp.Models;
+using CloudinaryDotNet.Actions;
+using CloudinaryDotNet;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,11 +13,12 @@ namespace APIFoodApp.Controllers
 	{
 		private readonly ILogger<DanhGiaController> _logger;
 		private readonly FoodAppContext _context;
-
-		public DanhGiaController(ILogger<DanhGiaController> logger, FoodAppContext context)
+		private readonly Cloudinary _cloudinary;
+		public DanhGiaController(ILogger<DanhGiaController> logger, FoodAppContext context, Cloudinary cloudinary)
 		{
 			_logger = logger;
 			_context = context;
+			_cloudinary = cloudinary;
 		}
 
 		/// <summary>
@@ -90,13 +93,31 @@ namespace APIFoodApp.Controllers
 		/// <param name="newDanhGiaDto">Thông tin đánh giá mới cần tạo.</param>
 		/// <returns>Đánh giá vừa được tạo nếu thành công.</returns>
 		[HttpPost]
-		public async Task<ActionResult<DanhGia>> CreateDanhGia(DanhGiaDto newDanhGiaDto)
+		public async Task<ActionResult<DanhGia>> CreateDanhGia([FromForm] DanhGiaDto newDanhGiaDto)
 		{
 			if (newDanhGiaDto == null)
 			{
 				return BadRequest("DanhGia data is null.");
 			}
+			// Upload ảnh lên Cloudinary
+			if (newDanhGiaDto.Img != null && newDanhGiaDto.Img.Length > 0)
+			{
+				var uploadParams = new ImageUploadParams
+				{
+					File = new FileDescription(newDanhGiaDto.Img.FileName, newDanhGiaDto.Img.OpenReadStream()),
+					Folder = "vote-images", // Tên thư mục Cloudinary
+					Transformation = new Transformation().Crop("limit").Width(300).Height(300)
+				};
 
+				var uploadResult = await _cloudinary.UploadAsync(uploadParams);
+				if (uploadResult.StatusCode != System.Net.HttpStatusCode.OK)
+				{
+					return BadRequest("Failed to upload image to Cloudinary.");
+				}
+
+				// Gán URL ảnh từ Cloudinary
+				newDanhGiaDto.Anh = uploadResult.SecureUrl.ToString();
+			}
 			var newDanhGia = new DanhGium
 			{
 				MaNguoiDung = newDanhGiaDto.MaNguoiDung,
@@ -104,9 +125,9 @@ namespace APIFoodApp.Controllers
 				SoSao = newDanhGiaDto.SoSao,
 				NoiDung = newDanhGiaDto.NoiDung,
 				Anh = newDanhGiaDto.Anh,
-				An = newDanhGiaDto.An ?? false,
-				ThoiGianDanhGia = newDanhGiaDto.ThoiGianDanhGia,
-				ThoiGianCapNhat = newDanhGiaDto.ThoiGianCapNhat
+				An = false,
+				ThoiGianDanhGia = DateTime.Now,
+				ThoiGianCapNhat = DateTime.Now
 			};
 
 			_context.DanhGia.Add(newDanhGia);
