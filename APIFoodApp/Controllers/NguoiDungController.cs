@@ -6,21 +6,70 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using System.Reflection;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace APIFoodApp.Controllers
 {
 	[ApiController]
 	[Route("api/[controller]/[action]")]
+	[Authorize]
 	public class NguoiDungController : ControllerBase
 	{
 		private readonly ILogger<NguoiDungController> _logger;
 		private readonly FoodAppContext _context;
 		private readonly Cloudinary _cloudinary;
-		public NguoiDungController(ILogger<NguoiDungController> logger, FoodAppContext context, Cloudinary cloudinary)
+		private readonly IConfiguration _configuration;
+		public NguoiDungController(ILogger<NguoiDungController> logger, FoodAppContext context, Cloudinary cloudinary, IConfiguration configuration)
 		{
 			_logger = logger;
 			_context = context;
 			_cloudinary = cloudinary;
+			_configuration = configuration;
+		}
+
+		/// <summary>
+		/// Đăng nhập với tên đăng nhập và mật khẩu.
+		/// </summary>
+		[AllowAnonymous] // Cho phép truy cập không cần đăng nhập
+		[HttpPost]
+		public async Task<IActionResult> Login(string username, string password)
+		{
+			var user = await _context.NguoiDungs.FirstOrDefaultAsync(u => u.TenDangNhap == username);
+
+			if (user == null || !BCrypt.Net.BCrypt.Verify(password, user.MatKhau))
+			{
+				return Unauthorized("Invalid username or password.");
+			}
+
+			// Xác định role từ trường Quyen
+			var role = user.Quyen == 1 ? "Admin" : "User";
+
+			// Tạo claims
+			var authClaims = new List<Claim>
+			{
+				new Claim(ClaimTypes.Name, user.TenDangNhap),
+				new Claim(ClaimTypes.Role, role), // Gán role ở đây
+				new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+			};
+
+			// Tạo JWT Token
+			var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWTSettings:Secret"]));
+			var token = new JwtSecurityToken(
+				issuer: _configuration["JWTSettings:Issuer"],
+				audience: _configuration["JWTSettings:Audience"],
+				expires: DateTime.Now.AddHours(1),
+				claims: authClaims,
+				signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
+			);
+
+			return Ok(new
+			{
+				token = new JwtSecurityTokenHandler().WriteToken(token),
+				expiration = token.ValidTo
+			});
 		}
 
 		/// <summary>
@@ -202,41 +251,6 @@ namespace APIFoodApp.Controllers
 			return NoContent();
 		}
 
-		/// <summary>
-		/// Đăng nhập với tên đăng nhập và mật khẩu.
-		/// </summary>
-		[AllowAnonymous] // Cho phép truy cập không cần đăng nhập
-		[HttpPost]
-		public async Task<IActionResult> Login(string username, string password)
-		{
-			var nd = await _context.NguoiDungs.SingleOrDefaultAsync(u => u.TenDangNhap == username);
-
-			if (nd == null)
-			{
-				return NotFound("Username không tồn tại.");
-			}
-
-			// Kiểm tra mật khẩu
-			if (!BCrypt.Net.BCrypt.Verify(password, nd.MatKhau))
-			{
-				return Unauthorized("Mật khẩu không đúng.");
-			}
-
-			// Cập nhật thời gian đăng nhập cuối cùng
-
-			// Trả về thông tin cơ bản của người dùng
-			return Ok(new
-			{
-				MaNguoiDung = nd.MaNguoiDung,
-				TenNguoiDung = nd.TenNguoiDung,
-				Email = nd.Email,
-				SoDienThoai = nd.SoDienThoai,
-				Anh = nd.Anh,
-				TenDangNhap = nd.TenDangNhap,
-				Quyen = nd.Quyen,
-				An = nd.An
-			});
-		}
 		/// <summary>
 		/// Tìm kiếm người dùng theo từ khóa.
 		/// </summary>
