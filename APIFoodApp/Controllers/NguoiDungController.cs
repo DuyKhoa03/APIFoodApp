@@ -15,7 +15,6 @@ namespace APIFoodApp.Controllers
 {
 	[ApiController]
 	[Route("api/[controller]/[action]")]
-	[Authorize]
 	public class NguoiDungController : ControllerBase
 	{
 		private readonly ILogger<NguoiDungController> _logger;

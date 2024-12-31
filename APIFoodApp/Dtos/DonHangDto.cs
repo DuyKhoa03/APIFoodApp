@@ -9,6 +9,7 @@ namespace APIFoodApp.Dtos
 		public int MaNguoiDung { get; set; }
 
 		public int MaPhuongThuc { get; set; }
+		public int MaDiaChi { get; set; }
 
 		public decimal? TongTien { get; set; }
 
@@ -23,5 +24,6 @@ namespace APIFoodApp.Dtos
 		public string? TenNguoiDung { get; set; }
 
 		public string? TenPhuongThuc { get; set; }
+		public string? TenDiaChi { get; set; }
 	}
 }

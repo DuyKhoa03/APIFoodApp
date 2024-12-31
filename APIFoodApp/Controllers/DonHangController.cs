@@ -24,19 +24,22 @@ namespace APIFoodApp.Controllers
 			var donHangs = await _context.DonHangs
 									   .Include(dh => dh.MaNguoiDungNavigation)
 									   .Include(dh => dh.MaPhuongThucNavigation)
+									   .Include(dh => dh.MaDiaChi)
 									   .Where(dh => dh.An == false)
 									   .Select(dh => new DonHangDto
 									   {
 										   MaDonHang = dh.MaDonHang,
 										   MaNguoiDung = dh.MaNguoiDung,
 										   MaPhuongThuc = dh.MaPhuongThuc,
+										   MaDiaChi = dh.MaDiaChi,
 										   TongTien = dh.TongTien,
 										   TrangThai = dh.TrangThai,
 										   NgayTao = dh.NgayTao,
 										   NgayCapNhat = dh.NgayCapNhat,
 										   An = dh.An,
 										   TenNguoiDung = dh.MaNguoiDungNavigation.TenNguoiDung,
-										   TenPhuongThuc = dh.MaPhuongThucNavigation.Ten
+										   TenPhuongThuc = dh.MaPhuongThucNavigation.Ten,
+										   TenDiaChi = dh.MaDiaChiNavigation.Ten,
 									   })
 									   .ToListAsync();
 
@@ -49,6 +52,7 @@ namespace APIFoodApp.Controllers
 			var donHang = await _context.DonHangs
 								   .Include(dh => dh.MaNguoiDungNavigation)
 								   .Include(dh => dh.MaPhuongThucNavigation)
+								   .Include(dh => dh.MaDiaChi)
 								   .Where(dh => dh.MaDonHang == id && dh.An == false)
 								   .Select(dh => new DonHangDto
 								   {
@@ -61,7 +65,8 @@ namespace APIFoodApp.Controllers
 									   NgayCapNhat = dh.NgayCapNhat,
 									   An = dh.An,
 									   TenNguoiDung = dh.MaNguoiDungNavigation.TenNguoiDung,
-									   TenPhuongThuc = dh.MaPhuongThucNavigation.Ten
+									   TenPhuongThuc = dh.MaPhuongThucNavigation.Ten,
+									   TenDiaChi = dh.MaDiaChiNavigation.Ten,
 								   })
 								   .FirstOrDefaultAsync();
 
@@ -85,6 +90,7 @@ namespace APIFoodApp.Controllers
 			{
 				MaNguoiDung = newDonHangDto.MaNguoiDung,
 				MaPhuongThuc = newDonHangDto.MaPhuongThuc,
+				MaDiaChi = newDonHangDto.MaDiaChi,
 				TongTien = newDonHangDto.TongTien,
 				TrangThai = newDonHangDto.TrangThai,
 				NgayTao = newDonHangDto.NgayTao,
@@ -114,6 +120,7 @@ namespace APIFoodApp.Controllers
 
 			existingDonHang.MaNguoiDung = updatedDonHangDto.MaNguoiDung;
 			existingDonHang.MaPhuongThuc = updatedDonHangDto.MaPhuongThuc;
+			existingDonHang.MaDiaChi = updatedDonHangDto.MaDiaChi;
 			existingDonHang.TongTien = updatedDonHangDto.TongTien;
 			existingDonHang.TrangThai = updatedDonHangDto.TrangThai;
 			existingDonHang.NgayTao = updatedDonHangDto.NgayTao;
@@ -165,6 +172,7 @@ namespace APIFoodApp.Controllers
 			var searchResults = await _context.DonHangs
 											  .Include(dh => dh.MaNguoiDungNavigation)
 											  .Include(dh => dh.MaPhuongThucNavigation)
+											  .Include(dh => dh.MaDiaChiNavigation)
 											  .Where(dh =>
 												  (dh.MaDonHang.ToString().Contains(keyword))
 												  && dh.An == false)
@@ -173,13 +181,15 @@ namespace APIFoodApp.Controllers
 												  MaDonHang = dh.MaDonHang,
 												  MaNguoiDung = dh.MaNguoiDung,
 												  MaPhuongThuc = dh.MaPhuongThuc,
+												  MaDiaChi = dh.MaDiaChi,
 												  TongTien = dh.TongTien,
 												  TrangThai = dh.TrangThai,
 												  NgayTao = dh.NgayTao,
 												  NgayCapNhat = dh.NgayCapNhat,
 												  An = dh.An,
 												  TenNguoiDung = dh.MaNguoiDungNavigation.TenNguoiDung,
-												  TenPhuongThuc = dh.MaPhuongThucNavigation.Ten
+												  TenPhuongThuc = dh.MaPhuongThucNavigation.Ten,
+												  TenDiaChi = dh.MaDiaChiNavigation.Ten
 											  })
 											  .ToListAsync();
 

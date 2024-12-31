@@ -53,7 +53,7 @@ public partial class FoodAppContext : DbContext
     {
         modelBuilder.Entity<ChiTietDonHang>(entity =>
         {
-            entity.HasKey(e => new { e.MaSanPham, e.MaDonHang }).HasName("PK__ChiTietD__3BEE1C67AB9CD424");
+            entity.HasKey(e => new { e.MaSanPham, e.MaDonHang }).HasName("PK__ChiTietD__3BEE1C6752D32057");
 
             entity.ToTable("ChiTietDonHang");
 
@@ -62,34 +62,34 @@ public partial class FoodAppContext : DbContext
             entity.HasOne(d => d.MaDonHangNavigation).WithMany(p => p.ChiTietDonHangs)
                 .HasForeignKey(d => d.MaDonHang)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__ChiTietDo__MaDon__5BE2A6F2");
+                .HasConstraintName("FK__ChiTietDo__MaDon__5CD6CB2B");
 
             entity.HasOne(d => d.MaSanPhamNavigation).WithMany(p => p.ChiTietDonHangs)
                 .HasForeignKey(d => d.MaSanPham)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__ChiTietDo__MaSan__5FB337D6");
+                .HasConstraintName("FK__ChiTietDo__MaSan__60A75C0F");
         });
 
         modelBuilder.Entity<ChiTietKhuyenMai>(entity =>
         {
-            entity.HasKey(e => new { e.MaSanPham, e.MaKhuyenMai }).HasName("PK__ChiTietK__3C322F16205BCBBD");
+            entity.HasKey(e => new { e.MaSanPham, e.MaKhuyenMai }).HasName("PK__ChiTietK__3C322F1632D84D55");
 
             entity.ToTable("ChiTietKhuyenMai");
 
             entity.HasOne(d => d.MaKhuyenMaiNavigation).WithMany(p => p.ChiTietKhuyenMais)
                 .HasForeignKey(d => d.MaKhuyenMai)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__ChiTietKh__MaKhu__59FA5E80");
+                .HasConstraintName("FK__ChiTietKh__MaKhu__5AEE82B9");
 
             entity.HasOne(d => d.MaSanPhamNavigation).WithMany(p => p.ChiTietKhuyenMais)
                 .HasForeignKey(d => d.MaSanPham)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__ChiTietKh__MaSan__60A75C0F");
+                .HasConstraintName("FK__ChiTietKh__MaSan__619B8048");
         });
 
         modelBuilder.Entity<DanhGium>(entity =>
         {
-            entity.HasKey(e => e.MaDanhGia).HasName("PK__DanhGia__AA9515BFE3D15826");
+            entity.HasKey(e => e.MaDanhGia).HasName("PK__DanhGia__AA9515BF046DE740");
 
             entity.Property(e => e.Anh).HasMaxLength(255);
             entity.Property(e => e.NoiDung).HasColumnType("ntext");
@@ -104,12 +104,12 @@ public partial class FoodAppContext : DbContext
             entity.HasOne(d => d.MaSanPhamNavigation).WithMany(p => p.DanhGia)
                 .HasForeignKey(d => d.MaSanPham)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__DanhGia__MaSanPh__5EBF139D");
+                .HasConstraintName("FK__DanhGia__MaSanPh__5FB337D6");
         });
 
         modelBuilder.Entity<DiaChi>(entity =>
         {
-            entity.HasKey(e => e.MaDiaChi).HasName("PK__DiaChi__EB61213EC8DDF09E");
+            entity.HasKey(e => e.MaDiaChi).HasName("PK__DiaChi__EB61213EF3946D84");
 
             entity.ToTable("DiaChi");
 
@@ -126,13 +126,18 @@ public partial class FoodAppContext : DbContext
 
         modelBuilder.Entity<DonHang>(entity =>
         {
-            entity.HasKey(e => e.MaDonHang).HasName("PK__DonHang__129584ADF7F8E0AD");
+            entity.HasKey(e => e.MaDonHang).HasName("PK__DonHang__129584ADE3DCE302");
 
             entity.ToTable("DonHang");
 
             entity.Property(e => e.NgayCapNhat).HasColumnType("datetime");
             entity.Property(e => e.NgayTao).HasColumnType("datetime");
             entity.Property(e => e.TongTien).HasColumnType("decimal(10, 2)");
+
+            entity.HasOne(d => d.MaDiaChiNavigation).WithMany(p => p.DonHangs)
+                .HasForeignKey(d => d.MaDiaChi)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__DonHang__MaDiaCh__59FA5E80");
 
             entity.HasOne(d => d.MaNguoiDungNavigation).WithMany(p => p.DonHangs)
                 .HasForeignKey(d => d.MaNguoiDung)
@@ -142,12 +147,12 @@ public partial class FoodAppContext : DbContext
             entity.HasOne(d => d.MaPhuongThucNavigation).WithMany(p => p.DonHangs)
                 .HasForeignKey(d => d.MaPhuongThuc)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__DonHang__MaPhuon__5CD6CB2B");
+                .HasConstraintName("FK__DonHang__MaPhuon__5DCAEF64");
         });
 
         modelBuilder.Entity<GioHang>(entity =>
         {
-            entity.HasKey(e => e.MaGioHang).HasName("PK__GioHang__F5001DA30FD1C2EB");
+            entity.HasKey(e => e.MaGioHang).HasName("PK__GioHang__F5001DA3DE7D86DD");
 
             entity.ToTable("GioHang");
 
@@ -159,12 +164,12 @@ public partial class FoodAppContext : DbContext
             entity.HasOne(d => d.MaSanPhamNavigation).WithMany(p => p.GioHangs)
                 .HasForeignKey(d => d.MaSanPham)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__GioHang__MaSanPh__619B8048");
+                .HasConstraintName("FK__GioHang__MaSanPh__628FA481");
         });
 
         modelBuilder.Entity<KhuyenMai>(entity =>
         {
-            entity.HasKey(e => e.MaKhuyenMai).HasName("PK__KhuyenMa__6F56B3BD7279F734");
+            entity.HasKey(e => e.MaKhuyenMai).HasName("PK__KhuyenMa__6F56B3BDA8EAD9F0");
 
             entity.ToTable("KhuyenMai");
 
@@ -179,12 +184,12 @@ public partial class FoodAppContext : DbContext
             entity.HasOne(d => d.MaLoaiNavigation).WithMany(p => p.KhuyenMais)
                 .HasForeignKey(d => d.MaLoai)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__KhuyenMai__MaLoa__5DCAEF64");
+                .HasConstraintName("FK__KhuyenMai__MaLoa__5EBF139D");
         });
 
         modelBuilder.Entity<LichSuDonHang>(entity =>
         {
-            entity.HasKey(e => e.MaLichSu).HasName("PK__LichSuDo__C443222AC8AFF940");
+            entity.HasKey(e => e.MaLichSu).HasName("PK__LichSuDo__C443222A8CEEF2D8");
 
             entity.ToTable("LichSuDonHang");
 
@@ -194,12 +199,12 @@ public partial class FoodAppContext : DbContext
             entity.HasOne(d => d.MaDonHangNavigation).WithMany(p => p.LichSuDonHangs)
                 .HasForeignKey(d => d.MaDonHang)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__LichSuDon__MaDon__5AEE82B9");
+                .HasConstraintName("FK__LichSuDon__MaDon__5BE2A6F2");
         });
 
         modelBuilder.Entity<LoaiKhuyenMai>(entity =>
         {
-            entity.HasKey(e => e.MaLoai).HasName("PK__LoaiKhuy__730A575973DCCCFE");
+            entity.HasKey(e => e.MaLoai).HasName("PK__LoaiKhuy__730A57591547088A");
 
             entity.ToTable("LoaiKhuyenMai");
 
@@ -209,7 +214,7 @@ public partial class FoodAppContext : DbContext
 
         modelBuilder.Entity<LoaiSanPham>(entity =>
         {
-            entity.HasKey(e => e.MaLoai).HasName("PK__LoaiSanP__730A575940E6F2EA");
+            entity.HasKey(e => e.MaLoai).HasName("PK__LoaiSanP__730A5759B2588C9B");
 
             entity.ToTable("LoaiSanPham");
 
@@ -219,15 +224,15 @@ public partial class FoodAppContext : DbContext
 
         modelBuilder.Entity<NguoiDung>(entity =>
         {
-            entity.HasKey(e => e.MaNguoiDung).HasName("PK__NguoiDun__C539D76275BDFE3E");
+            entity.HasKey(e => e.MaNguoiDung).HasName("PK__NguoiDun__C539D76208344482");
 
             entity.ToTable("NguoiDung");
 
-            entity.HasIndex(e => e.SoDienThoai, "UQ__NguoiDun__0389B7BD863FCF00").IsUnique();
+            entity.HasIndex(e => e.SoDienThoai, "UQ__NguoiDun__0389B7BD34EF47B5").IsUnique();
 
-            entity.HasIndex(e => e.TenDangNhap, "UQ__NguoiDun__55F68FC0C454CF60").IsUnique();
+            entity.HasIndex(e => e.TenDangNhap, "UQ__NguoiDun__55F68FC0183A715E").IsUnique();
 
-            entity.HasIndex(e => e.Email, "UQ__NguoiDun__A9D10534DD9822CC").IsUnique();
+            entity.HasIndex(e => e.Email, "UQ__NguoiDun__A9D1053452717184").IsUnique();
 
             entity.Property(e => e.Anh).HasMaxLength(255);
             entity.Property(e => e.Email).HasMaxLength(100);
@@ -247,7 +252,7 @@ public partial class FoodAppContext : DbContext
 
         modelBuilder.Entity<NhaCungCap>(entity =>
         {
-            entity.HasKey(e => e.MaNhaCungCap).HasName("PK__NhaCungC__53DA9205B96E632A");
+            entity.HasKey(e => e.MaNhaCungCap).HasName("PK__NhaCungC__53DA9205DC4A1224");
 
             entity.ToTable("NhaCungCap");
 
@@ -264,7 +269,7 @@ public partial class FoodAppContext : DbContext
 
         modelBuilder.Entity<PhuongThucThanhToan>(entity =>
         {
-            entity.HasKey(e => e.MaPhuongThuc).HasName("PK__PhuongTh__35F7404E3307E87A");
+            entity.HasKey(e => e.MaPhuongThuc).HasName("PK__PhuongTh__35F7404E06F8C6A7");
 
             entity.ToTable("PhuongThucThanhToan");
 
@@ -274,7 +279,7 @@ public partial class FoodAppContext : DbContext
 
         modelBuilder.Entity<SanPham>(entity =>
         {
-            entity.HasKey(e => e.MaSanPham).HasName("PK__SanPham__FAC7442D9217E725");
+            entity.HasKey(e => e.MaSanPham).HasName("PK__SanPham__FAC7442D12B352F8");
 
             entity.ToTable("SanPham");
 
@@ -292,17 +297,17 @@ public partial class FoodAppContext : DbContext
             entity.HasOne(d => d.MaLoaiNavigation).WithMany(p => p.SanPhams)
                 .HasForeignKey(d => d.MaLoai)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__SanPham__MaLoai__628FA481");
+                .HasConstraintName("FK__SanPham__MaLoai__6383C8BA");
 
             entity.HasOne(d => d.MaNhaCungCapNavigation).WithMany(p => p.SanPhams)
                 .HasForeignKey(d => d.MaNhaCungCap)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__SanPham__MaNhaCu__6383C8BA");
+                .HasConstraintName("FK__SanPham__MaNhaCu__6477ECF3");
         });
 
         modelBuilder.Entity<ThongBao>(entity =>
         {
-            entity.HasKey(e => e.MaThongBao).HasName("PK__ThongBao__04DEB54E4FD43B88");
+            entity.HasKey(e => e.MaThongBao).HasName("PK__ThongBao__04DEB54EB29F7AB7");
 
             entity.ToTable("ThongBao");
 

@@ -15,5 +15,7 @@ public partial class DiaChi
 
     public bool? An { get; set; }
 
+    public virtual ICollection<DonHang> DonHangs { get; set; } = new List<DonHang>();
+
     public virtual NguoiDung MaNguoiDungNavigation { get; set; } = null!;
 }
