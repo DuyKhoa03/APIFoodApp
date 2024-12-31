@@ -12,7 +12,7 @@ namespace APIFoodApp.Controllers
 	public class SanPhamController : ControllerBase
 	{
 		private readonly ILogger<SanPhamController> _logger;
-		private readonly FoodAppContext _context; 
+		private readonly FoodAppContext _context;
 		private readonly Cloudinary _cloudinary;
 
 		public SanPhamController(ILogger<SanPhamController> logger, FoodAppContext context, Cloudinary cloudinary)

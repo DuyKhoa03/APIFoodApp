@@ -21,9 +21,13 @@ public partial class DonHang
 
     public bool? An { get; set; }
 
+    public int MaDiaChi { get; set; }
+
     public virtual ICollection<ChiTietDonHang> ChiTietDonHangs { get; set; } = new List<ChiTietDonHang>();
 
     public virtual ICollection<LichSuDonHang> LichSuDonHangs { get; set; } = new List<LichSuDonHang>();
+
+    public virtual DiaChi MaDiaChiNavigation { get; set; } = null!;
 
     public virtual NguoiDung MaNguoiDungNavigation { get; set; } = null!;
 
