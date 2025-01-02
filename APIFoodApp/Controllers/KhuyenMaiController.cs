@@ -78,6 +78,34 @@ namespace APIFoodApp.Controllers
 			return Ok(KhuyenMai);
 		}
 
+		[HttpGet("{name}")]
+		public async Task<ActionResult<KhuyenMaiDto>> GetByName(string name)
+		{
+			var KhuyenMai = await _context.KhuyenMais
+									 .Where(m => m.Ten == name && m.An == false)
+									 .Select(m => new KhuyenMaiDto
+									 {
+										 MaKhuyenMai = m.MaKhuyenMai,
+										 MaLoai = m.MaLoai,
+										 Ten = m.Ten,
+										 GiaTri = m.GiaTri,
+										 DieuKienApDung = m.DieuKienApDung,
+										 BatDau = m.BatDau,
+										 KetThuc = m.KetThuc,
+										 NgayTao = m.NgayTao,
+										 NgayCapNhat = m.NgayCapNhat,
+										 TenLoai = m.MaLoaiNavigation.TenLoai
+									 })
+									 .FirstOrDefaultAsync();
+
+			if (KhuyenMai == null)
+			{
+				return NotFound("KhuyenMai not found.");
+			}
+
+			return Ok(KhuyenMai);
+		}
+
 		/// <summary>
 		/// Tạo mới một KhuyenMai.
 		/// </summary>

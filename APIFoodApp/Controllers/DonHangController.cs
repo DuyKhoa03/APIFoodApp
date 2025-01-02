@@ -24,7 +24,7 @@ namespace APIFoodApp.Controllers
 			var donHangs = await _context.DonHangs
 									   .Include(dh => dh.MaNguoiDungNavigation)
 									   .Include(dh => dh.MaPhuongThucNavigation)
-									   .Include(dh => dh.MaDiaChi)
+									   .Include(dh => dh.MaDiaChiNavigation)
 									   .Where(dh => dh.An == false)
 									   .Select(dh => new DonHangDto
 									   {
@@ -52,7 +52,7 @@ namespace APIFoodApp.Controllers
 			var donHang = await _context.DonHangs
 								   .Include(dh => dh.MaNguoiDungNavigation)
 								   .Include(dh => dh.MaPhuongThucNavigation)
-								   .Include(dh => dh.MaDiaChi)
+								   .Include(dh => dh.MaDiaChiNavigation)
 								   .Where(dh => dh.MaDonHang == id && dh.An == false)
 								   .Select(dh => new DonHangDto
 								   {
