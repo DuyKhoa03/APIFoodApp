@@ -18,7 +18,7 @@ namespace APIFoodApp.Controllers
 			_logger = logger;
 			_context = context;
 		}
-		[Authorize(Roles = "Admin")]
+		[Authorize(Roles = "Admin, User")]
 		[HttpGet]
 		public async Task<ActionResult<IEnumerable<DonHangDto>>> Get()
 		{
@@ -46,7 +46,7 @@ namespace APIFoodApp.Controllers
 
 			return Ok(donHangs);
 		}
-		[Authorize(Roles = "Admin")]
+		[Authorize(Roles = "Admin, User")]
 		[HttpGet("{id}")]
 		public async Task<ActionResult<DonHangDto>> GetById(int id)
 		{
@@ -199,7 +199,7 @@ namespace APIFoodApp.Controllers
 
 			return NoContent();
 		}
-
+		[Authorize(Roles = "Admin, User")]
 		[HttpGet("{keyword}")]
 		public async Task<ActionResult<IEnumerable<DonHangDto>>> Search(string keyword)
 		{

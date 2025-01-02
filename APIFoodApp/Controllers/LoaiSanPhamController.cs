@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace APIFoodApp.Controllers
 {
-	[Authorize(Roles = "Admin")]
 	[ApiController]
 	[Route("api/[controller]/[action]")]
 	public class LoaiSanPhamController : ControllerBase
@@ -24,6 +23,7 @@ namespace APIFoodApp.Controllers
 		/// </summary>
 		/// <returns>Danh sách các loại sản phẩm.</returns>
 		[HttpGet]
+		[Authorize(Roles = "Admin, User")]
 		public async Task<ActionResult<IEnumerable<LoaiSanPham>>> Get()
 		{
 			var productTypes = await _context.LoaiSanPhams
@@ -39,6 +39,7 @@ namespace APIFoodApp.Controllers
 		/// <param name="id">ID của loại sản phẩm cần lấy.</param>
 		/// <returns>Thông tin của loại sản phẩm nếu tìm thấy; nếu không, trả về thông báo lỗi.</returns>
 		[HttpGet("{id}")]
+		[Authorize(Roles = "Admin, User")]
 		public async Task<ActionResult<LoaiSanPham>> GetById(int id)
 		{
 			var productType = await _context.LoaiSanPhams
@@ -61,6 +62,7 @@ namespace APIFoodApp.Controllers
 		/// <param name="newProductType">Thông tin của loại sản phẩm mới cần tạo.</param>
 		/// <returns>Loại sản phẩm vừa được tạo nếu thành công; nếu không, trả về thông báo lỗi.</returns>
 		[HttpPost]
+		[Authorize(Roles = "Admin")]
 		public async Task<ActionResult<LoaiSanPham>> CreateProductType(LoaiSanPham newProductType)
 		{
 			if (newProductType == null)
@@ -81,6 +83,7 @@ namespace APIFoodApp.Controllers
 		/// <param name="updatedProductType">Thông tin mới của loại sản phẩm.</param>
 		/// <returns>Không trả về nội dung nếu cập nhật thành công; nếu không, trả về thông báo lỗi.</returns>
 		[HttpPut("{id}")]
+		[Authorize(Roles = "Admin")]
 		public async Task<IActionResult> UpdateProductType(int id, LoaiSanPham updatedProductType)
 		{
 			var existingProductType = await _context.LoaiSanPhams.FindAsync(id);
@@ -118,6 +121,7 @@ namespace APIFoodApp.Controllers
 		/// <param name="id">ID của loại sản phẩm cần xóa.</param>
 		/// <returns>Không trả về nội dung nếu xóa thành công; nếu không, trả về thông báo lỗi.</returns>
 		[HttpDelete("{id}")]
+		[Authorize(Roles = "Admin")]
 		public async Task<IActionResult> DeleteProductType(int id)
 		{
 			var productType = await _context.LoaiSanPhams.FindAsync(id);
@@ -152,6 +156,7 @@ namespace APIFoodApp.Controllers
 		/// <returns>Danh sách các loại sản phẩm có chứa từ khóa trong tên.</returns>
 		// GET: api/loaisanpham/search/{keyword}
 		[HttpGet("{keyword}")]
+		[Authorize(Roles = "Admin, User")]
 		public async Task<ActionResult<IEnumerable<LoaiSanPham>>> Search(string keyword)
 		{
 			if (string.IsNullOrWhiteSpace(keyword))

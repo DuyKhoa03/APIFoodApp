@@ -6,7 +6,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace APIFoodApp.Controllers
 {
-	[Authorize(Roles ="Admin")]	
 	[ApiController]
 	[Route("api/[controller]/[action]")]
 	public class ThongBaoController : ControllerBase
@@ -25,6 +24,7 @@ namespace APIFoodApp.Controllers
 		/// </summary>
 		/// <returns>Danh sách các thông báo.</returns>
 		[HttpGet]
+		[Authorize(Roles = "Admin, User")]
 		public async Task<ActionResult<IEnumerable<ThongBaoDto>>> Get()
 		{
 			var thongBaos = await _context.ThongBaos
@@ -55,6 +55,7 @@ namespace APIFoodApp.Controllers
 		/// <param name="id">ID của thông báo cần lấy.</param>
 		/// <returns>Thông tin của thông báo nếu tìm thấy.</returns>
 		[HttpGet("{id}")]
+		[Authorize(Roles = "Admin, User")]
 		public async Task<ActionResult<ThongBaoDto>> GetById(int id)
 		{
 			var thongBao = await _context.ThongBaos
@@ -90,6 +91,7 @@ namespace APIFoodApp.Controllers
 		/// <param name="newThongBaoDto">Thông tin thông báo mới cần tạo.</param>
 		/// <returns>Thông báo vừa được tạo nếu thành công.</returns>
 		[HttpPost]
+		[Authorize(Roles = "Admin")]
 		public async Task<ActionResult<ThongBao>> CreateThongBao(ThongBaoDto newThongBaoDto)
 		{
 			if (newThongBaoDto == null)
@@ -123,6 +125,7 @@ namespace APIFoodApp.Controllers
 		/// <param name="updatedThongBaoDto">Thông tin thông báo cần cập nhật.</param>
 		/// <returns>Không trả về nội dung nếu cập nhật thành công.</returns>
 		[HttpPut("{id}")]
+		[Authorize(Roles = "Admin")]
 		public async Task<IActionResult> UpdateThongBao(int id, ThongBaoDto updatedThongBaoDto)
 		{
 			if (updatedThongBaoDto == null)
@@ -172,6 +175,7 @@ namespace APIFoodApp.Controllers
 		/// <param name="id">ID của thông báo cần xóa.</param>
 		/// <returns>Không trả về nội dung nếu xóa thành công.</returns>
 		[HttpDelete("{id}")]
+		[Authorize(Roles = "Admin")]
 		public async Task<IActionResult> DeleteThongBao(int id)
 		{
 			var thongBao = await _context.ThongBaos.FindAsync(id);
@@ -193,6 +197,7 @@ namespace APIFoodApp.Controllers
 		/// <param name="keyword">Từ khóa tìm kiếm (tên, mô tả, nội dung, hoặc thể loại).</param>
 		/// <returns>Danh sách các thông báo phù hợp với từ khóa tìm kiếm.</returns>
 		[HttpGet("{keyword}")]
+		[Authorize(Roles = "Admin")]
 		public async Task<ActionResult<IEnumerable<ThongBaoDto>>> Search(string keyword)
 		{
 			if (string.IsNullOrWhiteSpace(keyword))

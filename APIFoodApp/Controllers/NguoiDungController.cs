@@ -21,6 +21,8 @@ namespace APIFoodApp.Controllers
 		private readonly FoodAppContext _context;
 		private readonly Cloudinary _cloudinary;
 		private readonly IConfiguration _configuration;
+		private static readonly Dictionary<string, (string OtpCode, DateTime Expiration)> OtpStorage = new();
+
 		public NguoiDungController(ILogger<NguoiDungController> logger, FoodAppContext context, Cloudinary cloudinary, IConfiguration configuration)
 		{
 			_logger = logger;
@@ -28,7 +30,6 @@ namespace APIFoodApp.Controllers
 			_cloudinary = cloudinary;
 			_configuration = configuration;
 		}
-
 		/// <summary>
 		/// Đăng nhập với tên đăng nhập và mật khẩu.
 		/// </summary>
@@ -325,6 +326,6 @@ namespace APIFoodApp.Controllers
 
 			return Ok(searchResults);
 		}
-
+	
 	}
 }

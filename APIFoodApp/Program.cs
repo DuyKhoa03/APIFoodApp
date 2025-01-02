@@ -8,6 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 var builder = WebApplication.CreateBuilder(args);
+
 builder.Services.AddSingleton(provider =>
 {
 	var config = provider.GetRequiredService<IConfiguration>();
