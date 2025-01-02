@@ -267,7 +267,29 @@ namespace APIFoodApp.Controllers
 
 			return NoContent();
 		}
+		/// <summary>
+		/// xóa giỏ hàng theo id người dùng
+		/// </summary>
+		/// <param name="id"></param>
+		/// <returns></returns>
+		[Authorize(Roles = "Admin, User")]
+		[HttpDelete("{id}")]
+		public async Task<IActionResult> DeleteGioHangByUserId(int id)
+		{
+			var gioHang = await _context.GioHangs.Where(p=>p.MaNguoiDung == id).ToListAsync();
+			if (gioHang == null)
+			{
+				return NotFound("GioHang not found.");
+			}
 
+			foreach(var item in gioHang)
+			{
+				_context.Remove(item);
+			}	
+			await _context.SaveChangesAsync();
+
+			return NoContent();
+		}
 		/// <summary>
 		/// Tìm kiếm sản phẩm trong giỏ hàng theo từ khóa.
 		/// </summary>

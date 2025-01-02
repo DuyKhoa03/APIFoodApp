@@ -1,10 +1,12 @@
 ﻿using APIFoodApp.Dtos;
 using APIFoodApp.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace APIFoodApp.Controllers
 {
+	[Authorize]
 	[ApiController]
 	[Route("api/[controller]/[action]")]
 	public class LichSuDonHangController : ControllerBase
