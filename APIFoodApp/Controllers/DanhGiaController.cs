@@ -4,9 +4,11 @@ using CloudinaryDotNet.Actions;
 using CloudinaryDotNet;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace APIFoodApp.Controllers
 {
+	[Authorize(Roles = "Admin, User")]
 	[ApiController]
 	[Route("api/[controller]/[action]")]
 	public class DanhGiaController : ControllerBase

@@ -32,7 +32,6 @@ namespace APIFoodApp.Controllers
 		/// <summary>
 		/// Đăng nhập với tên đăng nhập và mật khẩu.
 		/// </summary>
-		[AllowAnonymous] // Cho phép truy cập không cần đăng nhập
 		[HttpPost]
 		public async Task<IActionResult> Login(string username, string password)
 		{
@@ -63,8 +62,6 @@ namespace APIFoodApp.Controllers
 				claims: authClaims,
 				signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
 			);
-
-
 			return Ok(new
 			{
 				token = new JwtSecurityTokenHandler().WriteToken(token),
@@ -77,6 +74,7 @@ namespace APIFoodApp.Controllers
 		/// <summary>
 		/// Lấy danh sách tất cả người dùng.
 		/// </summary>
+		[Authorize(Roles = "Admin")]		
 		[HttpGet]
 		public async Task<ActionResult<IEnumerable<NguoiDungDto>>> Get()
 		{
@@ -102,6 +100,7 @@ namespace APIFoodApp.Controllers
 		/// <summary>
 		/// Lấy thông tin chi tiết của người dùng theo ID.
 		/// </summary>
+		[Authorize(Roles = "Admin, User")]
 		[HttpGet("{id}")]
 		public async Task<ActionResult<NguoiDungDto>> GetById(int id)
 		{
@@ -131,6 +130,7 @@ namespace APIFoodApp.Controllers
 		/// <summary>
 		/// tìm người dùng theo username
 		/// </summary>
+		[Authorize(Roles = "Admin, User")]
 		[HttpGet("{username}")]
 		public async Task<ActionResult<NguoiDungDto>> GetByUsername(string username)
 		{
@@ -219,6 +219,7 @@ namespace APIFoodApp.Controllers
 		///// <summary>
 		///// Cập nhật thông tin người dùng.
 		///// </summary>
+		[Authorize(Roles = "Admin, User")]
 		[HttpPut("{id}")]
 		public async Task<IActionResult> UpdateNguoiDung(int id, [FromForm] NguoiDungDto updatedNguoiDungDto)
 		{
@@ -274,6 +275,7 @@ namespace APIFoodApp.Controllers
 		/// <summary>
 		/// Xóa một người dùng dựa vào ID.
 		/// </summary>
+		[Authorize(Roles = "Admin")]
 		[HttpDelete("{id}")]
 		public async Task<IActionResult> DeleteNguoiDung(int id)
 		{
@@ -293,6 +295,7 @@ namespace APIFoodApp.Controllers
 		/// Tìm kiếm người dùng theo từ khóa.
 		/// </summary>
 		/// <param name="keyword">Từ khóa tìm kiếm (tên, email hoặc số điện thoại).</param>
+		[Authorize(Roles = "Admin")]
 		[HttpGet("{keyword}")]
 		public async Task<ActionResult<IEnumerable<NguoiDungDto>>> Search(string keyword)
 		{

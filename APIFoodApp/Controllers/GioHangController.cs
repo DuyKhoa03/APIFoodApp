@@ -1,5 +1,6 @@
 ﻿using APIFoodApp.Dtos;
 using APIFoodApp.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -77,6 +78,7 @@ namespace APIFoodApp.Controllers
 		/// </summary>
 		/// <param name="id"></param>
 		/// <returns></returns>
+		[Authorize(Roles = "Admin, User")]
 		[HttpGet("{id}")]
 		public async Task<ActionResult<GioHangDto>> GetByUserId(int id)
 		{
@@ -107,6 +109,7 @@ namespace APIFoodApp.Controllers
 		/// </summary>
 		/// <param name="newGioHangDto">Thông tin sản phẩm trong giỏ hàng cần thêm.</param>
 		/// <returns>Sản phẩm vừa được thêm vào giỏ hàng.</returns>
+		[Authorize(Roles = "Admin, User")]
 		[HttpPost]
 		public async Task<ActionResult<GioHang>> CreateGioHang(GioHangDto newGioHangDto)
 		{
@@ -184,6 +187,7 @@ namespace APIFoodApp.Controllers
 		/// <param name="id">ID của giỏ hàng cần cập nhật.</param>
 		/// <param name="updatedGioHangDto">Thông tin sản phẩm trong giỏ hàng cần cập nhật.</param>
 		/// <returns>Không trả về nội dung nếu cập nhật thành công.</returns>
+		[Authorize(Roles = "Admin, User")]
 		[HttpPut]
 		public async Task<IActionResult> UpdateGioHang(GioHangDto updatedGioHangDto)
 		{
@@ -248,6 +252,7 @@ namespace APIFoodApp.Controllers
 		/// </summary>
 		/// <param name="id">ID của sản phẩm trong giỏ hàng cần xóa.</param>
 		/// <returns>Không trả về nội dung nếu xóa thành công.</returns>
+		[Authorize(Roles = "Admin, User")]
 		[HttpDelete("{id}")]
 		public async Task<IActionResult> DeleteGioHang(int id)
 		{
@@ -268,6 +273,7 @@ namespace APIFoodApp.Controllers
 		/// </summary>
 		/// <param name="keyword">Từ khóa tìm kiếm (tên người dùng hoặc tên sản phẩm).</param>
 		/// <returns>Danh sách các sản phẩm trong giỏ hàng phù hợp với từ khóa tìm kiếm.</returns>
+		[Authorize(Roles = "Admin, User")]
 		[HttpGet("{keyword}")]
 		public async Task<ActionResult<IEnumerable<GioHangDto>>> Search(string keyword)
 		{

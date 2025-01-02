@@ -2,11 +2,13 @@
 using APIFoodApp.Models;
 using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace APIFoodApp.Controllers
 {
+	[Authorize]
 	[ApiController]
 	[Route("api/[controller]/[action]")]
 	public class SanPhamController : ControllerBase
@@ -96,7 +98,8 @@ namespace APIFoodApp.Controllers
 
 		/// <summary>
 		/// Thêm sản phẩm mới.
-		/// </summary>
+		/// </summary>	
+		[Authorize(Roles ="Admin")]		
 		[HttpPost]
 		public async Task<ActionResult> Create([FromForm] SanPhamDto dto)
 		{
@@ -163,6 +166,7 @@ namespace APIFoodApp.Controllers
 		/// <summary>
 		/// Cập nhật sản phẩm.
 		/// </summary>
+		[Authorize(Roles = "Admin")]
 		[HttpPut("{id}")]
 		public async Task<IActionResult> Update(int id, [FromForm] SanPhamDto updatedProductDto)
 		{
@@ -221,6 +225,7 @@ namespace APIFoodApp.Controllers
 		/// <summary>
 		/// Xóa mềm sản phẩm.
 		/// </summary>
+		[Authorize(Roles = "Admin")]
 		[HttpDelete("{id}")]
 		public async Task<IActionResult> Delete(int id)
 		{
@@ -236,6 +241,7 @@ namespace APIFoodApp.Controllers
 		/// <summary>
 		/// Tìm kiếm sản phẩm theo tên hoặc mô tả.
 		/// </summary>
+		
 		[HttpGet("{keyword}")]
 		public async Task<ActionResult<IEnumerable<SanPhamDto>>> Search(string keyword)
 		{

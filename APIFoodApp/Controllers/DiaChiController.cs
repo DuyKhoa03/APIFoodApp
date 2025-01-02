@@ -1,10 +1,12 @@
 ﻿using APIFoodApp.Dtos;
 using APIFoodApp.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace APIFoodApp.Controllers
 {
+	[Authorize(Roles = "Admin, User")]
 	[ApiController]
 	[Route("api/[controller]/[action]")]
 	public class DiaChiController : ControllerBase

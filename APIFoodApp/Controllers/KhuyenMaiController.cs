@@ -1,5 +1,6 @@
 ﻿using APIFoodApp.Dtos;
 using APIFoodApp.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -22,6 +23,7 @@ namespace APIFoodApp.Controllers
 		/// Lấy danh sách tất cả các KhuyenMai, chỉ bao gồm các KhuyenMai không bị ẩn.
 		/// </summary>
 		/// <returns>Danh sách các KhuyenMai sắp xếp theo thứ tự.</returns>
+		[Authorize(Roles = "Admin, User")]
 		[HttpGet]
 		public async Task<ActionResult<IEnumerable<KhuyenMaiDto>>> Get()
 		{
@@ -50,6 +52,7 @@ namespace APIFoodApp.Controllers
 		/// </summary>
 		/// <param name="id">ID của KhuyenMai cần lấy.</param>
 		/// <returns>Thông tin của KhuyenMai nếu tìm thấy; nếu không, trả về thông báo lỗi.</returns>
+		[Authorize(Roles = "Admin, User")]
 		[HttpGet("{id}")]
 		public async Task<ActionResult<KhuyenMaiDto>> GetById(int id)
 		{
@@ -77,7 +80,7 @@ namespace APIFoodApp.Controllers
 
 			return Ok(KhuyenMai);
 		}
-
+		[Authorize(Roles = "Admin, User")]
 		[HttpGet("{name}")]
 		public async Task<ActionResult<KhuyenMaiDto>> GetByName(string name)
 		{
@@ -111,6 +114,7 @@ namespace APIFoodApp.Controllers
 		/// </summary>
 		/// <param name="newKhuyenMaiDto">Thông tin KhuyenMai mới cần tạo.</param>
 		/// <returns>KhuyenMai vừa được tạo nếu thành công; nếu không, trả về thông báo lỗi.</returns>
+		[Authorize(Roles = "Admin")]
 		[HttpPost]
 		public async Task<ActionResult<KhuyenMai>> CreateKhuyenMai(KhuyenMaiDto newKhuyenMaiDto)
 		{
@@ -144,6 +148,7 @@ namespace APIFoodApp.Controllers
 		/// <param name="id">ID của KhuyenMai cần cập nhật.</param>
 		/// <param name="updatedKhuyenMaiDto">Thông tin KhuyenMai cần cập nhật.</param>
 		/// <returns>Không trả về nội dung nếu cập nhật thành công; nếu không, trả về thông báo lỗi.</returns>
+		[Authorize(Roles = "Admin")]
 		[HttpPut("{id}")]
 		public async Task<IActionResult> UpdateKhuyenMai(int id, KhuyenMaiDto updatedKhuyenMaiDto)
 		{
@@ -193,6 +198,7 @@ namespace APIFoodApp.Controllers
 		/// </summary>
 		/// <param name="id">ID của KhuyenMai cần xóa.</param>
 		/// <returns>Không trả về nội dung nếu xóa thành công; nếu không, trả về thông báo lỗi.</returns>
+		[Authorize(Roles = "Admin")]
 		[HttpDelete("{id}")]
 		public async Task<IActionResult> DeleteKhuyenMai(int id)
 		{
@@ -214,6 +220,7 @@ namespace APIFoodApp.Controllers
 		/// <param name="keyword">Từ khóa tìm kiếm (tên KhuyenMai).</param>
 		/// <returns>Danh sách các KhuyenMai có tên phù hợp với từ khóa tìm kiếm.</returns>
 		// GET: api/KhuyenMai/search/{keyword}
+		[Authorize(Roles = "Admin")]
 		[HttpGet("{keyword}")]
 		public async Task<ActionResult<IEnumerable<KhuyenMai>>> Search(string keyword)
 		{

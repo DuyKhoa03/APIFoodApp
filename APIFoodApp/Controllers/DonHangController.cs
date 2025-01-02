@@ -1,5 +1,6 @@
 ﻿using APIFoodApp.Dtos;
 using APIFoodApp.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,7 +18,7 @@ namespace APIFoodApp.Controllers
 			_logger = logger;
 			_context = context;
 		}
-
+		[Authorize(Roles = "Admin")]
 		[HttpGet]
 		public async Task<ActionResult<IEnumerable<DonHangDto>>> Get()
 		{
@@ -45,7 +46,7 @@ namespace APIFoodApp.Controllers
 
 			return Ok(donHangs);
 		}
-
+		[Authorize(Roles = "Admin")]
 		[HttpGet("{id}")]
 		public async Task<ActionResult<DonHangDto>> GetById(int id)
 		{
@@ -77,7 +78,44 @@ namespace APIFoodApp.Controllers
 
 			return Ok(donHang);
 		}
+		/// <summary>
+		/// lấy danh sách đơn hàng theo id người dùng
+		/// </summary>
+		[Authorize(Roles = "Admin, User")]
+		[HttpGet("{id}")]
+		public async Task<ActionResult<DonHangDto>> GetByUserId(int id)
+		{
+			var donHang = await _context.DonHangs
+								   .Include(dh => dh.MaNguoiDungNavigation)
+								   .Include(dh => dh.MaPhuongThucNavigation)
+								   .Include(dh => dh.MaDiaChiNavigation)
+								   .Where(dh => dh.MaNguoiDung == id && dh.An == false)
+								   .Select(dh => new DonHangDto
+								   {
+									   MaDonHang = dh.MaDonHang,
+									   MaNguoiDung = dh.MaNguoiDung,
+									   MaPhuongThuc = dh.MaPhuongThuc,
+									   TongTien = dh.TongTien,
+									   TrangThai = dh.TrangThai,
+									   NgayTao = dh.NgayTao,
+									   NgayCapNhat = dh.NgayCapNhat,
+									   An = dh.An,
+									   TenNguoiDung = dh.MaNguoiDungNavigation.TenNguoiDung,
+									   TenPhuongThuc = dh.MaPhuongThucNavigation.Ten,
+									   TenDiaChi = dh.MaDiaChiNavigation.Ten,
+								   })
+								   .ToListAsync();
 
+			if (donHang == null)
+			{
+				return NotFound("DonHang not found.");
+			}
+
+			return Ok(donHang);
+		}
+		/// <param name="newDonHangDto"></param>
+		/// <returns></returns>
+		[Authorize(Roles = "Admin, User")]
 		[HttpPost]
 		public async Task<ActionResult<DonHang>> CreateDonHang(DonHangDto newDonHangDto)
 		{
@@ -103,7 +141,7 @@ namespace APIFoodApp.Controllers
 
 			return CreatedAtAction(nameof(GetById), new { id = newDonHang.MaDonHang }, newDonHang);
 		}
-
+		[Authorize(Roles = "Admin, User")]
 		[HttpPut("{id}")]
 		public async Task<IActionResult> UpdateDonHang(int id, DonHangDto updatedDonHangDto)
 		{
@@ -146,6 +184,7 @@ namespace APIFoodApp.Controllers
 			return NoContent();
 		}
 
+		[Authorize(Roles = "Admin, User")]
 		[HttpDelete("{id}")]
 		public async Task<IActionResult> DeleteDonHang(int id)
 		{
